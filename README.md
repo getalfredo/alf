@@ -143,6 +143,18 @@ See `test-error-tasks.yml` for examples of error handling and dependency skippin
 
 Supports `${{ env.VARIABLE_NAME }}` and `${{ secrets.SECRET_NAME }}` syntax for variable interpolation in task commands.
 
+#### Environment Variable Loading
+
+Environment variables are loaded in the following priority order:
+
+1. **Process environment** (`process.env`) - includes Bun's automatic `.env` file loading
+2. **Global YAML env** - Variables defined in the root-level `env` section
+3. **Task-specific env** - Variables defined in each task's `env` section
+
+**Important**: `.env` files are only loaded from the current working directory where you run the task runner, not from the directory containing the YAML file. If you need environment variables from a different location, either:
+- Run the task runner from that directory, or
+- Define the variables directly in the YAML file's `env` section
+
 ### Dependency Management
 
 - Automatic topological sorting of tasks
