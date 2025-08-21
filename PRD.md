@@ -32,32 +32,32 @@ name: 'Project Build and Test'
 version: '1.0'
 
 tasks:
-  build:
-    name: 'Build application'
-    runs: |
-      docker compose build
+    build:
+        name: 'Build application'
+        runs: |
+            docker compose build
 
-  test:
-    name: 'Run tests'
-    runs: |
-      docker compose up -d
-      docker compose exec webapp test
-    depends_on: [build]
+    test:
+        name: 'Run tests'
+        runs: |
+            docker compose up -d
+            docker compose exec webapp test
+        depends_on: [build]
 
-  deploy:
-    name: 'Deploy to staging'
-    runs: |
-      ./scripts/deploy.sh staging
-    depends_on: [bui test]
-    env:
-      ENVIRONMENT: staging
-      API_KEY: ${{ secrets.STAGING_API_KEY }}
+    deploy:
+        name: 'Deploy to staging'
+        runs: |
+            ./scripts/deploy.sh staging
+        depends_on: [bui test]
+        env:
+            ENVIRONMENT: staging
+            API_KEY: ${{ secrets.STAGING_API_KEY }}
 
-  clean:
-    name: 'Clean build artifacts'
-    runs: |
-      rm -rf bin/
-      rm -rf dist/
+    clean:
+        name: 'Clean build artifacts'
+        runs: |
+            rm -rf bin/
+            rm -rf dist/
 ```
 
 ### 2. CLI Interface

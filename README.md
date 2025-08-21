@@ -60,38 +60,38 @@ version: '1.0'
 
 # Global environment variables
 env:
-  PROJECT_NAME: 'my-project'
-  BUILD_ENV: 'production'
+    PROJECT_NAME: 'my-project'
+    BUILD_ENV: 'production'
 
 tasks:
-  setup:
-    name: 'Setup environment'
-    runs: |
-      echo "Setting up ${{ env.PROJECT_NAME }}"
-      mkdir -p build
-      npm install
+    setup:
+        name: 'Setup environment'
+        runs: |
+            echo "Setting up ${{ env.PROJECT_NAME }}"
+            mkdir -p build
+            npm install
 
-  build:
-    name: 'Build application'
-    runs: |
-      echo "Building in ${{ env.BUILD_ENV }} mode"
-      npm run build
-    depends_on: [setup]
-    env:
-      NODE_ENV: production
+    build:
+        name: 'Build application'
+        runs: |
+            echo "Building in ${{ env.BUILD_ENV }} mode"
+            npm run build
+        depends_on: [setup]
+        env:
+            NODE_ENV: production
 
-  test:
-    name: 'Run tests'
-    runs: npm test
-    depends_on: [build]
+    test:
+        name: 'Run tests'
+        runs: npm test
+        depends_on: [build]
 
-  deploy:
-    name: 'Deploy application'
-    runs: |
-      echo "Deploying to production"
-      ./scripts/deploy.sh
-    depends_on: [test]
-    working_directory: ./deployment
+    deploy:
+        name: 'Deploy application'
+        runs: |
+            echo "Deploying to production"
+            ./scripts/deploy.sh
+        depends_on: [test]
+        working_directory: ./deployment
 ```
 
 ### Configuration Schema

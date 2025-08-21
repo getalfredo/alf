@@ -2,47 +2,47 @@ name: 'Sample Build and Test Pipeline'
 version: '1.0'
 
 env:
-  PROJECT_NAME: 'task-runner-demo'
+    PROJECT_NAME: 'task-runner-demo'
 
 tasks:
-  setup:
-    name: 'Setup environment'
-    runs: |
-      echo "Setting up environment for ${{ env.PROJECT_NAME }}"
-      mkdir -p tmp
-      echo "Setup complete"
+    setup:
+        name: 'Setup environment'
+        runs: |
+            echo "Setting up environment for ${{ env.PROJECT_NAME }}"
+            mkdir -p tmp
+            echo "Setup complete"
 
-  build:
-    name: 'Build application'
-    runs: |
-      echo "Building application..."
-      sleep 1
-      echo $BUILD_ENV
-      echo $PROJECT_NAME
-      echo ${{ env.PROJECT_NAME }}
-      echo "Build completed successfully"
-    depends_on: [setup]
-    env:
-      BUILD_ENV: 'production'
+    build:
+        name: 'Build application'
+        runs: |
+            echo "Building application..."
+            sleep 1
+            echo $BUILD_ENV
+            echo $PROJECT_NAME
+            echo ${{ env.PROJECT_NAME }}
+            echo "Build completed successfully"
+        depends_on: [setup]
+        env:
+            BUILD_ENV: 'production'
 
-  test:
-    name: 'Run tests'
-    runs: |
-      echo "Running tests..."
-      sleep 1
-      echo "All tests passed"
-    depends_on: [build]
+    test:
+        name: 'Run tests'
+        runs: |
+            echo "Running tests..."
+            sleep 1
+            echo "All tests passed"
+        depends_on: [build]
 
-  package:
-    name: 'Package application'
-    runs: |
-      echo "Packaging application..."
-      echo "Package created: dist/app.tar.gz"
-    depends_on: [test]
+    package:
+        name: 'Package application'
+        runs: |
+            echo "Packaging application..."
+            echo "Package created: dist/app.tar.gz"
+        depends_on: [test]
 
-  clean:
-    name: 'Clean build artifacts'
-    runs: |
-      echo "Cleaning up..."
-      rm -rf tmp
-      echo "Cleanup complete"
+    clean:
+        name: 'Clean build artifacts'
+        runs: |
+            echo "Cleaning up..."
+            rm -rf tmp
+            echo "Cleanup complete"
