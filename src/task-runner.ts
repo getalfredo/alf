@@ -6,10 +6,12 @@ import {
     type ExecutionOptions,
     type TaskFile,
 } from './types.ts'
+import * as path from 'path'
 
 export class TaskRunner {
     private configParser: ConfigParser
     private executions: Map<string, TaskExecution>
+    private logFilePath: string | null = null
 
     constructor() {
         this.configParser = new ConfigParser()
@@ -18,13 +20,20 @@ export class TaskRunner {
 
     async run(options: ExecutionOptions): Promise<void> {
         const taskFile = await this.configParser.parseTaskFile(options.taskFile)
+        
+        // Setup log file
+        this.setupLogFile(options.taskFile)
+        
         const tasksToRun = this.configParser.resolveDependencyOrder(
             taskFile.tasks,
             options.tasks
         )
 
-        console.log(`📋 Execution plan: ${tasksToRun.join(' → ')}`)
+        const planMessage = `📋 Execution plan: ${tasksToRun.join(' → ')}`
+        console.log(planMessage)
+        this.writeToLog(planMessage)
         console.log('')
+        this.writeToLog('')
 
         for (const taskName of tasksToRun) {
             const execution = await this.executeTask(
@@ -42,10 +51,11 @@ export class TaskRunner {
             }
 
             if (execution.status === 'failed') {
-                console.log(
-                    `⚠️  Task '${taskName}' failed but continuing due to --continue-on-error`
-                )
+                const failMessage = `⚠️  Task '${taskName}' failed but continuing due to --continue-on-error`
+                console.log(failMessage)
+                this.writeToLog(failMessage)
                 console.log('')
+                this.writeToLog('')
             }
         }
 
@@ -72,9 +82,13 @@ export class TaskRunner {
         this.executions.set(taskName, execution)
 
         try {
-            console.log(`🔄 Running task: ${taskName}`)
+            const runMessage = `🔄 Running task: ${taskName}`
+            console.log(runMessage)
+            this.writeToLog(runMessage)
             if (task.name) {
-                console.log(`   ${task.name}`)
+                const nameMessage = `   ${task.name}`
+                console.log(nameMessage)
+                this.writeToLog(nameMessage)
             }
 
             // Check if dependencies succeeded
@@ -83,10 +97,11 @@ export class TaskRunner {
                     const depExecution = this.executions.get(dep)
                     if (depExecution?.status === 'failed') {
                         execution.status = 'skipped'
-                        console.log(
-                            `⏭️  Skipping '${taskName}' due to failed dependency '${dep}'`
-                        )
+                        const skipMessage = `⏭️  Skipping '${taskName}' due to failed dependency '${dep}'`
+                        console.log(skipMessage)
+                        this.writeToLog(skipMessage)
                         console.log('')
+                        this.writeToLog('')
                         return execution
                     }
                 }
@@ -121,10 +136,12 @@ export class TaskRunner {
             )
 
             if (options.verbose) {
-                console.log(`   Command: ${interpolatedCommand}`)
-                console.log(
-                    `   Working dir: ${task.working_directory || process.cwd()}`
-                )
+                const cmdMessage = `   Command: ${interpolatedCommand}`
+                const dirMessage = `   Working dir: ${task.working_directory || process.cwd()}`
+                console.log(cmdMessage)
+                this.writeToLog(cmdMessage)
+                console.log(dirMessage)
+                this.writeToLog(dirMessage)
             }
 
             const result = await this.runShellCommand(interpolatedCommand, {
@@ -138,23 +155,33 @@ export class TaskRunner {
 
             if (result.exitCode === 0) {
                 execution.status = 'success'
-                console.log(`✅ Task '${taskName}' completed successfully`)
+                const successMessage = `✅ Task '${taskName}' completed successfully`
+                console.log(successMessage)
+                this.writeToLog(successMessage)
 
                 if (options.verbose && result.output) {
-                    console.log('   Output:')
+                    const outputHeader = '   Output:'
+                    console.log(outputHeader)
+                    this.writeToLog(outputHeader)
                     result.output.split('\n').forEach((line) => {
-                        if (line.trim()) console.log(`     ${line}`)
+                        if (line.trim()) {
+                            const outputLine = `     ${line}`
+                            console.log(outputLine)
+                            this.writeToLog(outputLine)
+                        }
                     })
                 }
             } else {
                 execution.status = 'failed'
                 execution.error = result.error
-                console.log(
-                    `❌ Task '${taskName}' failed with exit code ${result.exitCode}`
-                )
+                const failMessage = `❌ Task '${taskName}' failed with exit code ${result.exitCode}`
+                console.log(failMessage)
+                this.writeToLog(failMessage)
 
                 if (result.error) {
-                    console.log(`   Error: ${result.error}`)
+                    const errorMessage = `   Error: ${result.error}`
+                    console.log(errorMessage)
+                    this.writeToLog(errorMessage)
                 }
             }
         } catch (error) {
@@ -162,12 +189,13 @@ export class TaskRunner {
             execution.error =
                 error instanceof Error ? error.message : String(error)
             execution.endTime = new Date()
-            console.log(
-                `❌ Task '${taskName}' failed: ${error instanceof Error ? error.message : String(error)}`
-            )
+            const errorMessage = `❌ Task '${taskName}' failed: ${error instanceof Error ? error.message : String(error)}`
+            console.log(errorMessage)
+            this.writeToLog(errorMessage)
         }
 
         console.log('')
+        this.writeToLog('')
         return execution
     }
 
@@ -190,12 +218,14 @@ export class TaskRunner {
                 const text = data.toString()
                 output += text
                 process.stdout.write(text)
+                this.writeToLog(text.trim(), false)
             })
 
             child.stderr?.on('data', (data) => {
                 const text = data.toString()
                 error += text
                 process.stderr.write(text)
+                this.writeToLog(text.trim(), false)
             })
 
             child.on('close', (code) => {
@@ -236,14 +266,26 @@ export class TaskRunner {
         const failed = executions.filter((e) => e.status === 'failed').length
         const skipped = executions.filter((e) => e.status === 'skipped').length
 
-        console.log('📊 Execution Summary:')
-        console.log(`   ✅ Successful: ${successful}`)
-        console.log(`   ❌ Failed: ${failed}`)
-        console.log(`   ⏭️  Skipped: ${skipped}`)
+        const summaryHeader = '📊 Execution Summary:'
+        const successLine = `   ✅ Successful: ${successful}`
+        const failedLine = `   ❌ Failed: ${failed}`
+        const skippedLine = `   ⏭️  Skipped: ${skipped}`
+        
+        console.log(summaryHeader)
+        this.writeToLog(summaryHeader)
+        console.log(successLine)
+        this.writeToLog(successLine)
+        console.log(failedLine)
+        this.writeToLog(failedLine)
+        console.log(skippedLine)
+        this.writeToLog(skippedLine)
 
         if (failed > 0) {
             console.log('')
-            console.log('Failed tasks:')
+            this.writeToLog('')
+            const failedTasksHeader = 'Failed tasks:'
+            console.log(failedTasksHeader)
+            this.writeToLog(failedTasksHeader)
             executions
                 .filter((e) => e.status === 'failed')
                 .forEach((e) => {
@@ -251,8 +293,53 @@ export class TaskRunner {
                         e.endTime && e.startTime
                             ? `${e.endTime.getTime() - e.startTime.getTime()}ms`
                             : 'unknown'
-                    console.log(`   ❌ ${e.taskName} (${duration})`)
+                    const failedTaskLine = `   ❌ ${e.taskName} (${duration})`
+                    console.log(failedTaskLine)
+                    this.writeToLog(failedTaskLine)
                 })
+        }
+        
+        if (this.logFilePath) {
+            console.log('')
+            console.log(`📝 Log written to: ${this.logFilePath}`)
+        }
+    }
+
+    private setupLogFile(taskFilePath: string): void {
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const day = String(now.getDate()).padStart(2, '0')
+        const hour = String(now.getHours()).padStart(2, '0')
+        const minute = String(now.getMinutes()).padStart(2, '0')
+        const second = String(now.getSeconds()).padStart(2, '0')
+        
+        const timestamp = `${year}${month}${day}-${hour}${minute}${second}`
+        const taskFileDir = path.dirname(taskFilePath)
+        this.logFilePath = path.join(taskFileDir, `run-log-${timestamp}.log`)
+        
+        // Write initial header to log file
+        const header = `=== Task Runner Log - ${now.toISOString()} ===\nTask file: ${taskFilePath}\n\n`
+        try {
+            const fs = require('fs')
+            fs.writeFileSync(this.logFilePath, header)
+        } catch (error) {
+            console.warn(`⚠️  Could not create log file: ${this.logFilePath}`)
+            this.logFilePath = null
+        }
+    }
+
+    private writeToLog(message: string, addNewline: boolean = true): void {
+        if (!this.logFilePath || !message.trim()) return
+        
+        const logMessage = addNewline ? message + '\n' : message + '\n'
+        
+        try {
+            // Use synchronous file append for consistency
+            const fs = require('fs')
+            fs.appendFileSync(this.logFilePath, logMessage)
+        } catch (error) {
+            // Silently fail to avoid disrupting task execution
         }
     }
 }
