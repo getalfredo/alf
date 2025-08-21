@@ -1,18 +1,18 @@
-name: "Error Testing Tasks"
-version: "1.0"
+name: 'Error Testing Tasks'
+version: '1.0'
 
 tasks:
   success:
-    name: "Always succeeds"
+    name: 'Always succeeds'
     runs: echo "This task succeeds"
 
   failure:
-    name: "Always fails"
+    name: 'Always fails'
     runs: |
       echo "This task will fail"
       exit 1
 
   dependent:
-    name: "Depends on failing task"
+    name: 'Depends on failing task'
     runs: echo "This should be skipped"
     depends_on: [failure]

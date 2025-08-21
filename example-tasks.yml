@@ -1,19 +1,19 @@
-name: "Sample Build and Test Pipeline"
-version: "1.0"
+name: 'Sample Build and Test Pipeline'
+version: '1.0'
 
 env:
-  PROJECT_NAME: "task-runner-demo"
+  PROJECT_NAME: 'task-runner-demo'
 
 tasks:
   setup:
-    name: "Setup environment"
+    name: 'Setup environment'
     runs: |
       echo "Setting up environment for ${{ env.PROJECT_NAME }}"
       mkdir -p tmp
       echo "Setup complete"
 
   build:
-    name: "Build application" 
+    name: 'Build application'
     runs: |
       echo "Building application..."
       sleep 1
@@ -23,10 +23,10 @@ tasks:
       echo "Build completed successfully"
     depends_on: [setup]
     env:
-      BUILD_ENV: "production"
+      BUILD_ENV: 'production'
 
   test:
-    name: "Run tests"
+    name: 'Run tests'
     runs: |
       echo "Running tests..."
       sleep 1
@@ -34,14 +34,14 @@ tasks:
     depends_on: [build]
 
   package:
-    name: "Package application"
+    name: 'Package application'
     runs: |
       echo "Packaging application..."
       echo "Package created: dist/app.tar.gz"
     depends_on: [test]
 
   clean:
-    name: "Clean build artifacts"
+    name: 'Clean build artifacts'
     runs: |
       echo "Cleaning up..."
       rm -rf tmp

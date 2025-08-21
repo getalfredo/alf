@@ -11,13 +11,21 @@
     "build": "bun build src/index.ts --outfile=dist/task-runner --target=bun",
     "build:ubuntu": "bun build src/index.ts --outfile=dist/task-runner-linux-x64 --target=bun --compile --target=bun-linux-x64",
     "dev": "bun --watch src/index.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
-  "keywords": ["cli", "task-runner", "yaml", "automation"],
+  "keywords": [
+    "cli",
+    "task-runner",
+    "yaml",
+    "automation"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prettier": "^3.6.2"
   },
   "peerDependencies": {
     "typescript": "^5"

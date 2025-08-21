@@ -11,7 +11,7 @@ A lightweight command-line interface tool that executes tasks defined in YAML co
 ✅ **Shell Command Execution** - Full shell command support with multiline scripts  
 ✅ **Colorized Output** - Rich terminal output with emojis and progress indicators  
 ✅ **Task Validation** - Configuration validation before execution  
-✅ **Dependency Visualization** - Graph view of task dependencies  
+✅ **Dependency Visualization** - Graph view of task dependencies
 
 ## Installation
 
@@ -55,24 +55,24 @@ bun dist/task-runner help
 ### Basic Task Configuration
 
 ```yaml
-name: "Project Build Pipeline"
-version: "1.0"
+name: 'Project Build Pipeline'
+version: '1.0'
 
 # Global environment variables
 env:
-  PROJECT_NAME: "my-project"
-  BUILD_ENV: "production"
+  PROJECT_NAME: 'my-project'
+  BUILD_ENV: 'production'
 
 tasks:
   setup:
-    name: "Setup environment"
+    name: 'Setup environment'
     runs: |
       echo "Setting up ${{ env.PROJECT_NAME }}"
       mkdir -p build
       npm install
 
   build:
-    name: "Build application"
+    name: 'Build application'
     runs: |
       echo "Building in ${{ env.BUILD_ENV }} mode"
       npm run build
@@ -81,12 +81,12 @@ tasks:
       NODE_ENV: production
 
   test:
-    name: "Run tests"
+    name: 'Run tests'
     runs: npm test
     depends_on: [build]
-    
+
   deploy:
-    name: "Deploy application"
+    name: 'Deploy application'
     runs: |
       echo "Deploying to production"
       ./scripts/deploy.sh
@@ -152,6 +152,7 @@ Environment variables are loaded in the following priority order:
 3. **Task-specific env** - Variables defined in each task's `env` section
 
 **Important**: `.env` files are only loaded from the current working directory where you run the task runner, not from the directory containing the YAML file. If you need environment variables from a different location, either:
+
 - Run the task runner from that directory, or
 - Define the variables directly in the YAML file's `env` section
 
@@ -202,6 +203,6 @@ This implementation fulfills all requirements from the PRD:
 ✅ Colorized output and progress indicators  
 ✅ Single binary distribution  
 ✅ Cross-platform support (built with Bun)  
-✅ Comprehensive test coverage  
+✅ Comprehensive test coverage
 
 The task runner is ready for production use and provides a simple yet powerful solution for local development and CI/CD automation.
