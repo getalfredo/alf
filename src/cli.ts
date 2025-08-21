@@ -42,7 +42,7 @@ export class CLI {
         }
         process.exit(error.exitCode || 1);
       } else {
-        console.error(`❌ Unexpected error: ${error.message}`);
+        console.error(`❌ Unexpected error: ${error instanceof Error ? error.message : String(error)}`);
         process.exit(1);
       }
     }
@@ -65,6 +65,9 @@ export class CLI {
     if (command !== 'help' && !configFile) {
       throw new TaskRunnerError(`Missing configuration file argument`);
     }
+    if (command === 'help') {
+      return { command };
+    }
 
     // Parse additional arguments
     const parsed: any = { command, configFile };
@@ -86,6 +89,10 @@ export class CLI {
 
   private async runCommand(args: any): Promise<void> {
     console.log(`🚀 Running tasks from ${args.configFile}`);
+    
+    if (!args.configFile) {
+      throw new TaskRunnerError('Configuration file is required');
+    }
     
     const options = {
       taskFile: args.configFile,
@@ -123,7 +130,7 @@ export class CLI {
       console.log(`✅ Configuration is valid`);
       console.log(`   Found ${Object.keys(taskFile.tasks).length} task(s)`);
     } catch (error) {
-      console.log(`❌ Configuration is invalid: ${error.message}`);
+      console.log(`❌ Configuration is invalid: ${error instanceof Error ? error.message : String(error)}`);
       process.exit(1);
     }
   }
@@ -136,6 +143,10 @@ export class CLI {
 
     const tasks = Object.keys(taskFile.tasks);
     const executionOrder = this.configParser.resolveDependencyOrder(taskFile.tasks);
+    if (!executionOrder) {
+      console.log('No tasks to display');
+      return;
+    }
     
     console.log('Execution order:');
     executionOrder.forEach((task, index) => {

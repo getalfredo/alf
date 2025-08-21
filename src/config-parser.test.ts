@@ -21,8 +21,8 @@ tasks:
   
   expect(taskFile.name).toBe("Test Config");
   expect(taskFile.version).toBe("1.0");
-  expect(taskFile.tasks.test.name).toBe("Test task");
-  expect(taskFile.tasks.test.runs).toBe('echo "Hello World"');
+  expect(taskFile.tasks.test?.name).toBe("Test task");
+  expect(taskFile.tasks.test?.runs).toBe('echo "Hello World"');
   
   // Clean up
   await Bun.write("test-config.yml", "");

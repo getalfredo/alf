@@ -12,7 +12,8 @@
       "Bash(bun test:*)",
       "Bash(mv:*)",
       "Bash(bun dist/task-runner run test-error-tasks.yml --continue-on-error)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(bun:*)"
     ],
     "deny": [],
     "ask": []

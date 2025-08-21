@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 import { ConfigParser } from "./config-parser.ts";
-import { TaskExecution, TaskRunnerError, ExecutionOptions, TaskFile } from "./types.ts";
+import { type TaskExecution, TaskRunnerError, type ExecutionOptions, type TaskFile } from "./types.ts";
 
 export class TaskRunner {
   private configParser: ConfigParser;
@@ -44,6 +44,9 @@ export class TaskRunner {
     options: ExecutionOptions
   ): Promise<TaskExecution> {
     const task = taskFile.tasks[taskName];
+    if (!task) {
+      throw new TaskRunnerError(`Task '${taskName}' not found`);
+    }
     
     const execution: TaskExecution = {
       taskName,
@@ -75,12 +78,25 @@ export class TaskRunner {
 
       execution.status = 'running';
 
-      // Prepare environment variables
-      const env = {
-        ...process.env,
-        ...taskFile.env,
-        ...task.env
-      };
+      // Prepare environment variables  
+      const env: Record<string, string> = {};
+      
+      // Add process.env with type safety
+      for (const [key, value] of Object.entries(process.env)) {
+        if (value !== undefined) {
+          env[key] = value;
+        }
+      }
+      
+      // Add task file env
+      if (taskFile.env) {
+        Object.assign(env, taskFile.env);
+      }
+      
+      // Add task-specific env
+      if (task.env) {
+        Object.assign(env, task.env);
+      }
 
       // Interpolate variables in the command
       const interpolatedCommand = this.interpolateVariables(task.runs, env);
@@ -124,9 +140,9 @@ export class TaskRunner {
 
     } catch (error) {
       execution.status = 'failed';
-      execution.error = error.message;
+      execution.error = error instanceof Error ? error.message : String(error);
       execution.endTime = new Date();
-      console.log(`❌ Task '${taskName}' failed: ${error.message}`);
+      console.log(`❌ Task '${taskName}' failed: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     console.log('');

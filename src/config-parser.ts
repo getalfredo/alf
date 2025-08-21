@@ -1,4 +1,4 @@
-import { TaskFile, TaskConfig, TaskRunnerError } from "./types.ts";
+import { type TaskFile, type TaskConfig, TaskRunnerError } from "./types.ts";
 
 export class ConfigParser {
   private interpolateVariables(value: string, env: Record<string, string>, secrets: Record<string, string> = {}): string {
@@ -24,7 +24,7 @@ export class ConfigParser {
       this.validateTaskFile(taskFile);
       return taskFile;
     } catch (error) {
-      throw new TaskRunnerError(`Failed to parse task file: ${error.message}`);
+      throw new TaskRunnerError(`Failed to parse task file: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -37,11 +37,12 @@ export class ConfigParser {
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      if (!line) continue;
       const trimmed = line.trim();
       
       if (!trimmed || trimmed.startsWith('#')) continue;
       
-      const currentIndent = line.length - line.trimLeft().length;
+      const currentIndent = line.length - line.trimStart().length;
       
       if (trimmed.includes(':')) {
         const [key, ...valueParts] = trimmed.split(':');
@@ -54,12 +55,12 @@ export class ConfigParser {
           } else {
             // Remove quotes from string values
             const cleanValue = value.replace(/^"(.*)"$/, '$1');
-            result[key] = cleanValue || undefined;
+            result[key as keyof TaskFile] = cleanValue || undefined;
             currentSection = null;
           }
         } else if (currentSection === 'tasks' && currentIndent === 2) {
           currentTask = key;
-          result.tasks[key] = {};
+          result.tasks[key] = {} as TaskConfig;
         } else if (currentTask && currentIndent === 4) {
           if (key === 'depends_on') {
             // Parse array format [task1, task2]
@@ -79,7 +80,11 @@ export class ConfigParser {
               let j = i + 1;
               while (j < lines.length) {
                 const nextLine = lines[j];
-                const nextIndent = nextLine.length - nextLine.trimLeft().length;
+                if (!nextLine) {
+                  j++;
+                  continue;
+                }
+                const nextIndent = nextLine.length - nextLine.trimStart().length;
                 if (nextIndent > 4 && nextLine.trim()) {
                   commandLines.push(nextLine.substring(6)); // Remove 6 spaces (4 for task + 2 for runs indentation)
                   i = j;
