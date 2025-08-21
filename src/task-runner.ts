@@ -1,5 +1,5 @@
 import { spawn } from 'child_process'
-import { ConfigParser } from './config-parser.ts'
+import { ConfigParser } from './parser/config-parser.ts'
 import {
     type TaskExecution,
     TaskRunnerError,

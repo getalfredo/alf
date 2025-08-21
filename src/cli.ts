@@ -1,6 +1,6 @@
 import { parseArgs } from 'util'
 import { TaskRunner } from './task-runner.ts'
-import { ConfigParser } from './config-parser.ts'
+import { ConfigParser } from './parser/config-parser.ts'
 import { TaskRunnerError } from './types.ts'
 
 export class CLI {

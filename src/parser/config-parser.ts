@@ -1,4 +1,4 @@
-import { type TaskFile, type TaskConfig, TaskRunnerError } from './types.ts'
+import { type TaskFile, type TaskConfig, TaskRunnerError } from '../types.ts'
 
 export class ConfigParser {
     private interpolateVariables(

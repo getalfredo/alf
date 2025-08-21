@@ -1,6 +1,6 @@
 import { test, expect } from 'bun:test'
 import { ConfigParser } from './config-parser.ts'
-import { TaskRunnerError } from './types.ts'
+import { TaskRunnerError } from '../types.ts'
 
 test('ConfigParser can parse valid YAML', async () => {
     const parser = new ConfigParser()
@@ -25,7 +25,7 @@ tasks:
     expect(taskFile.tasks.test?.runs).toBe('echo "Hello World"')
 
     // Clean up
-    await Bun.write('test-config.yml', '')
+    await Bun.$`rm -f test-config.yml`
 })
 
 test('ConfigParser detects circular dependencies', async () => {
@@ -45,7 +45,7 @@ test('ConfigParser detects circular dependencies', async () => {
     }).toThrow(TaskRunnerError)
 
     // Clean up
-    await Bun.write('circular-config.yml', '')
+    await Bun.$`rm -f circular-config.yml`
 })
 
 test('ConfigParser resolves dependency order', async () => {
@@ -68,5 +68,5 @@ test('ConfigParser resolves dependency order', async () => {
     expect(order).toEqual(['task3', 'task2', 'task1'])
 
     // Clean up
-    await Bun.write('deps-config.yml', '')
+    await Bun.$`rm -f deps-config.yml`
 })
