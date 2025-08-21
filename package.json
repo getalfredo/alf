@@ -1,8 +1,20 @@
 {
-  "name": "quickstart",
-  "module": "index.ts",
+  "name": "task-runner",
+  "version": "1.0.0",
+  "description": "A lightweight CLI tool for executing tasks defined in YAML configuration files",
+  "main": "src/index.ts",
+  "bin": {
+    "task-runner": "./dist/task-runner"
+  },
   "type": "module",
-  "private": true,
+  "scripts": {
+    "build": "bun build src/index.ts --outfile=dist/task-runner --target=bun",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test"
+  },
+  "keywords": ["cli", "task-runner", "yaml", "automation"],
+  "author": "",
+  "license": "MIT",
   "devDependencies": {
     "@types/bun": "latest"
   },
