@@ -1,21 +1,22 @@
 {
-    "permissions": {
-        "allow": [
-            "Bash(go mod init:*)",
-            "Bash(go mod:*)",
-            "Bash(go get:*)",
-            "Bash(go build:*)",
-            "Bash(./task-runner:*)",
-            "Bash(mkdir:*)",
-            "Bash(bun run:*)",
-            "Bash(./dist/task-runner:*)",
-            "Bash(bun test:*)",
-            "Bash(mv:*)",
-            "Bash(bun dist/task-runner run test-error-tasks.yml --continue-on-error)",
-            "Bash(rm:*)",
-            "Bash(bun:*)"
-        ],
-        "deny": [],
-        "ask": []
-    }
+  "permissions": {
+    "allow": [
+      "Bash(go mod init:*)",
+      "Bash(go mod:*)",
+      "Bash(go get:*)",
+      "Bash(go build:*)",
+      "Bash(./task-runner:*)",
+      "Bash(mkdir:*)",
+      "Bash(bun run:*)",
+      "Bash(./dist/task-runner:*)",
+      "Bash(bun test:*)",
+      "Bash(mv:*)",
+      "Bash(bun dist/task-runner run test-error-tasks.yml --continue-on-error)",
+      "Bash(rm:*)",
+      "Bash(bun:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
 }

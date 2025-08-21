@@ -1,4 +1,5 @@
 import { type TaskFile, type TaskConfig, TaskRunnerError } from '../types.ts'
+import * as yaml from 'js-yaml'
 
 export class ConfigParser {
     private interpolateVariables(
@@ -24,9 +25,8 @@ export class ConfigParser {
             const file = Bun.file(filePath)
             const content = await file.text()
 
-            // Simple YAML parser - this is a basic implementation
-            // In a production environment, you'd want to use a proper YAML library
-            const taskFile = this.parseYAML(content)
+            // Use js-yaml library for proper YAML parsing
+            const taskFile = yaml.load(content) as TaskFile
 
             this.validateTaskFile(taskFile)
             return taskFile
@@ -37,114 +37,6 @@ export class ConfigParser {
         }
     }
 
-    private parseYAML(content: string): TaskFile {
-        const lines = content.split('\n')
-        const result: any = {}
-        let currentSection: string | null = null
-        let currentTask: string | null = null
-        let indent = 0
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i]
-            if (!line) continue
-            const trimmed = line.trim()
-
-            if (!trimmed || trimmed.startsWith('#')) continue
-
-            const currentIndent = line.length - line.trimStart().length
-
-            if (trimmed.includes(':')) {
-                const [key, ...valueParts] = trimmed.split(':')
-                const value = valueParts.join(':').trim()
-
-                if (currentIndent === 0) {
-                    if (key === 'tasks') {
-                        result.tasks = {}
-                        currentSection = 'tasks'
-                    } else if (key === 'env') {
-                        result.env = {}
-                        currentSection = 'env'
-                    } else {
-                        // Remove quotes from string values
-                        const cleanValue = value.replace(/^"(.*)"$/, '$1')
-                        result[key as keyof TaskFile] = cleanValue || undefined
-                        currentSection = null
-                    }
-                } else if (currentSection === 'env' && currentIndent === 2) {
-                    // Handle top-level environment variables
-                    const cleanValue = value.replace(/^"(.*)"$/, '$1')
-                    result.env[key] = cleanValue
-                } else if (currentSection === 'tasks' && currentIndent === 2) {
-                    currentTask = key
-                    result.tasks[key] = {} as TaskConfig
-                } else if (currentTask && currentIndent === 4) {
-                    if (key === 'depends_on') {
-                        // Parse array format [task1, task2]
-                        if (value.startsWith('[') && value.endsWith(']')) {
-                            const items = value
-                                .slice(1, -1)
-                                .split(',')
-                                .map((s) => s.trim())
-                            result.tasks[currentTask][key] = items
-                        } else {
-                            result.tasks[currentTask][key] = [value]
-                        }
-                    } else if (key === 'env') {
-                        result.tasks[currentTask][key] = {}
-                    } else if (key === 'runs') {
-                        // Handle multiline commands
-                        if (value === '|') {
-                            // Multi-line literal style
-                            let commandLines = []
-                            let j = i + 1
-                            while (j < lines.length) {
-                                const nextLine = lines[j]
-                                if (!nextLine) {
-                                    j++
-                                    continue
-                                }
-                                const nextIndent =
-                                    nextLine.length -
-                                    nextLine.trimStart().length
-                                if (nextIndent > 4 && nextLine.trim()) {
-                                    commandLines.push(nextLine.substring(6)) // Remove 6 spaces (4 for task + 2 for runs indentation)
-                                    i = j
-                                } else if (nextLine.trim() === '') {
-                                    commandLines.push('')
-                                    i = j
-                                } else {
-                                    break
-                                }
-                                j++
-                            }
-                            result.tasks[currentTask][key] =
-                                commandLines.join('\n')
-                        } else {
-                            result.tasks[currentTask][key] = value
-                        }
-                    } else {
-                        const cleanValue = value.replace(/^"(.*)"$/, '$1')
-                        result.tasks[currentTask][key] =
-                            cleanValue === 'true'
-                                ? true
-                                : cleanValue === 'false'
-                                  ? false
-                                  : cleanValue
-                    }
-                } else if (
-                    currentTask &&
-                    currentIndent === 6 &&
-                    result.tasks[currentTask].env
-                ) {
-                    // Handle task-level environment variables (6 spaces indentation)
-                    const cleanValue = value.replace(/^"(.*)"$/, '$1')
-                    result.tasks[currentTask].env[key] = cleanValue
-                }
-            }
-        }
-
-        return result as TaskFile
-    }
 
     private validateTaskFile(taskFile: TaskFile): void {
         if (!taskFile.tasks || Object.keys(taskFile.tasks).length === 0) {

@@ -25,9 +25,13 @@
     "license": "MIT",
     "devDependencies": {
         "@types/bun": "latest",
+        "@types/js-yaml": "^4.0.9",
         "prettier": "^3.6.2"
     },
     "peerDependencies": {
         "typescript": "^5"
+    },
+    "dependencies": {
+        "js-yaml": "^4.1.0"
     }
 }
