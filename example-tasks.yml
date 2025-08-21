@@ -17,6 +17,7 @@ tasks:
     runs: |
       echo "Building application..."
       sleep 1
+      echo $BUILD_ENV
       echo "Build completed successfully"
     depends_on: [setup]
     env:
