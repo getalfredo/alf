@@ -52,12 +52,19 @@ export class ConfigParser {
           if (key === 'tasks') {
             result.tasks = {};
             currentSection = 'tasks';
+          } else if (key === 'env') {
+            result.env = {};
+            currentSection = 'env';
           } else {
             // Remove quotes from string values
             const cleanValue = value.replace(/^"(.*)"$/, '$1');
             result[key as keyof TaskFile] = cleanValue || undefined;
             currentSection = null;
           }
+        } else if (currentSection === 'env' && currentIndent === 2) {
+          // Handle top-level environment variables
+          const cleanValue = value.replace(/^"(.*)"$/, '$1');
+          result.env[key] = cleanValue;
         } else if (currentSection === 'tasks' && currentIndent === 2) {
           currentTask = key;
           result.tasks[key] = {} as TaskConfig;
@@ -104,9 +111,10 @@ export class ConfigParser {
             const cleanValue = value.replace(/^"(.*)"$/, '$1');
             result.tasks[currentTask][key] = cleanValue === 'true' ? true : cleanValue === 'false' ? false : cleanValue;
           }
-        } else if (currentTask && key.startsWith(' ') && result.tasks[currentTask].env) {
-          const envKey = key.trim();
-          result.tasks[currentTask].env[envKey] = value;
+        } else if (currentTask && currentIndent === 6 && result.tasks[currentTask].env) {
+          // Handle task-level environment variables (6 spaces indentation)
+          const cleanValue = value.replace(/^"(.*)"$/, '$1');
+          result.tasks[currentTask].env[key] = cleanValue;
         }
       }
     }

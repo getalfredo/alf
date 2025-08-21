@@ -18,6 +18,8 @@ tasks:
       echo "Building application..."
       sleep 1
       echo $BUILD_ENV
+      echo $PROJECT_NAME
+      echo ${{ env.PROJECT_NAME }}
       echo "Build completed successfully"
     depends_on: [setup]
     env:
