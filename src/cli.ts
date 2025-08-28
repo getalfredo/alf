@@ -5,7 +5,8 @@ import {
     ListCommand, 
     ValidateCommand, 
     GraphCommand, 
-    ServeCommand 
+    ServeCommand,
+    StackCommand 
 } from './commands/index.ts'
 
 export class CLI {
@@ -15,6 +16,7 @@ export class CLI {
     private validateCommand: ValidateCommand
     private graphCommand: GraphCommand
     private serveCommand: ServeCommand
+    private stackCommand: StackCommand
 
     constructor() {
         this.program = new Command()
@@ -23,6 +25,7 @@ export class CLI {
         this.validateCommand = new ValidateCommand()
         this.graphCommand = new GraphCommand()
         this.serveCommand = new ServeCommand()
+        this.stackCommand = new StackCommand()
         this.setupCommands()
     }
 
@@ -97,6 +100,15 @@ export class CLI {
             .option('-h, --host <host>', 'Host to bind to', '0.0.0.0')
             .action(async (options) => {
                 await this.handleCommand(() => this.serveCommand.execute(options))
+            })
+
+        // Stack command
+        this.program
+            .command('stack')
+            .description('Create a new Docker stack with docker-compose.yml and .env')
+            .argument('<stack-name>', 'Name of the stack to create')
+            .action(async (stackName) => {
+                await this.handleCommand(() => this.stackCommand.execute(stackName))
             })
     }
 
