@@ -106,9 +106,11 @@ export class CLI {
         this.program
             .command('stack')
             .description('Create a new Docker stack with docker-compose.yml and .env')
-            .argument('<stack-name>', 'Name of the stack to create')
-            .action(async (stackName) => {
-                await this.handleCommand(() => this.stackCommand.execute(stackName))
+            .argument('[stack-name]', 'Name of the stack to create')
+            .option('-t, --template <template>', 'Template to use (node, python, go)', 'node')
+            .option('-l, --list', 'List available templates')
+            .action(async (stackName, options) => {
+                await this.handleCommand(() => this.stackCommand.execute(stackName, options))
             })
     }
 
