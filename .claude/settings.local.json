@@ -18,7 +18,10 @@
       "Bash(./dist/alf-linux-x64:*)",
       "Bash(./dist/alf-macos)",
       "Bash(./dist/alf-macos:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

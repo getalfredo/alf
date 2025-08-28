@@ -37,9 +37,14 @@ export class CLI {
             .exitOverride() // Prevent automatic process.exit()
             .configureOutput({
                 writeErr: (str: string) => {
-                    // Suppress the "error: unknown command" message for empty input
-                    if (str.includes('error: unknown command') && process.argv.slice(2).length === 0) {
-                        return
+                    // Suppress the "error: unknown command" message when no actual commands are given
+                    // This happens when the binary name itself is interpreted as a command
+                    if (str.includes('error: unknown command')) {
+                        const args = process.argv.slice(2)
+                        // If there are no args, or the only arg is the binary name/path, suppress the error
+                        if (args.length === 0 || args.every(arg => arg.includes('alf'))) {
+                            return
+                        }
                     }
                     process.stderr.write(str)
                 }
