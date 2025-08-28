@@ -10,7 +10,7 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "build:macos": "bun build --compile --target=bun --outfile=dist/alf-macos ./src/index.ts",
-        "build:linux": "bun build src/index.ts --outfile=dist/alf-linux-x64 --target=bun --compile --target=bun-linux-x64",
+        "build:linux": "bun build src/index.ts --outfile=dist/alf-linux-x64 --target=bun-linux-x64 --compile",
         "build": "bun run build:linux && bun run build:macos"
     },
     "author": "",

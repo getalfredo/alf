@@ -51,7 +51,12 @@ export class CLI {
     }
 
     private parseCommandLine() {
-        const args = process.argv.slice(2)
+        let args = process.argv.slice(2)
+        
+        // Handle case where binary name might be passed as first arg (can happen with certain installations)
+        if (args.length > 0 && (args[0] === 'alf' || args[0].endsWith('alf') || args[0].endsWith('task-runner'))) {
+            args = args.slice(1)
+        }
 
         if (args.length === 0) {
             return { command: 'help' }
@@ -171,11 +176,12 @@ export class CLI {
     }
 
     private showHelp(): void {
+        const programName = process.argv[1].split('/').pop() || 'alf'
         console.log(`
 📚 Task Runner - A lightweight CLI tool for executing YAML-defined tasks
 
 Usage:
-  task-runner <command> <config-file> [options]
+  ${programName} <command> <config-file> [options]
 
 Commands:
   run <file>              Run all tasks or specific tasks
@@ -190,11 +196,11 @@ Options for 'run' command:
   --verbose, -v           Enable verbose output
 
 Examples:
-  task-runner run tasks.yml
-  task-runner run tasks.yml --task build,test
-  task-runner list tasks.yml
-  task-runner validate tasks.yml
-  task-runner graph tasks.yml
+  ${programName} run tasks.yml
+  ${programName} run tasks.yml --task build,test
+  ${programName} list tasks.yml
+  ${programName} validate tasks.yml
+  ${programName} graph tasks.yml
 `)
     }
 }

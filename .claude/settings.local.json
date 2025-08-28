@@ -15,7 +15,9 @@
       "Bash(rm:*)",
       "Bash(bun:*)",
       "Bash(cat:*)",
-      "Bash(./dist/alf-linux-x64:*)"
+      "Bash(./dist/alf-linux-x64:*)",
+      "Bash(./dist/alf-macos)",
+      "Bash(./dist/alf-macos:*)"
     ],
     "deny": [],
     "ask": []
