@@ -1,7 +1,5 @@
 #!/usr/bin/env bun
 
-import { parseArgs } from 'util'
-import { TaskRunner } from './task-runner.ts'
 import { CLI } from './cli.ts'
 
 async function main() {
