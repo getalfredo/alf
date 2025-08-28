@@ -1,0 +1,35 @@
+#!/bin/bash
+PATH=./node_modules/.bin:$PATH
+
+set -e
+
+function default {
+    help
+}
+
+function help {
+    echo "$0 <task> <args>"
+    echo "Tasks:"
+    compgen -A function | cat -n
+}
+
+function bump-tag {
+  git fetch --tags
+  latest=$(git tag -l | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+  
+  if [ -z "$latest" ]; then
+    new_tag="v0.0.1"
+  else
+    version_number=${latest#v}
+    IFS='.' read -r major minor patch <<< "$version_number"
+    new_tag="v$major.$minor.$((patch + 1))"
+  fi
+  
+  git tag "$new_tag"
+  git push
+  git push --tags
+  echo "Bumped from $latest to $new_tag"
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time ${@:-default}

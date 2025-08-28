@@ -9,7 +9,7 @@
     "type": "module",
     "scripts": {
         "build": "bun build src/index.ts --outfile=dist/task-runner --target=bun",
-        "build:linux": "bun build src/index.ts --outfile=dist/alf-x64 --target=bun --compile --target=bun-linux-x64",
+        "build:linux": "bun build src/index.ts --outfile=dist/alf-linux-x64 --target=bun --compile --target=bun-linux-x64",
         "dev": "bun --watch src/index.ts",
         "test": "bun test",
         "format": "prettier --write .",
