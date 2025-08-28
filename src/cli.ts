@@ -102,6 +102,12 @@ export class CLI {
     }
 
     async run(): Promise<void> {
+        // If no arguments provided, show help
+        if (process.argv.length <= 2) {
+            this.program.help()
+            return
+        }
+        
         await this.program.parseAsync()
     }
 }
