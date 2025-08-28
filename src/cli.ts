@@ -31,6 +31,10 @@ export class CLI {
             .name('alf')
             .description('A lightweight CLI tool for executing YAML-defined tasks')
             .version('1.0.0')
+            .showHelpAfterError()
+            .configureHelp({
+                sortSubcommands: true,
+            })
 
         // Run command
         this.program
@@ -102,15 +106,13 @@ export class CLI {
     }
 
     async run(): Promise<void> {
-        // Filter out node/bun executable and script name to get actual CLI args
+        // Check if no commands provided before parsing
         const args = process.argv.slice(2)
-        
-        // If no actual CLI arguments provided, show help
         if (args.length === 0) {
-            this.program.help()
+            this.program.outputHelp()
             return
         }
         
-        await this.program.parseAsync()
+        await this.program.parseAsync(process.argv)
     }
 }
