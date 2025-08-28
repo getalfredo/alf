@@ -14,7 +14,8 @@
       "Bash(bun dist/task-runner run test-error-tasks.yml --continue-on-error)",
       "Bash(rm:*)",
       "Bash(bun:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(./dist/alf-linux-x64:*)"
     ],
     "deny": [],
     "ask": []

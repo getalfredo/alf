@@ -3,24 +3,16 @@
     "version": "1.0.0",
     "description": "A lightweight CLI tool for executing tasks defined in YAML configuration files",
     "main": "src/index.ts",
-    "bin": {
-        "task-runner": "./dist/task-runner"
-    },
-    "type": "module",
+    "bin": "./dist/alf",
     "scripts": {
-        "build": "bun build src/index.ts --outfile=dist/task-runner --target=bun",
-        "build:linux": "bun build src/index.ts --outfile=dist/alf-linux-x64 --target=bun --compile --target=bun-linux-x64",
         "dev": "bun --watch src/index.ts",
         "test": "bun test",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "build:macos": "bun build --compile --target=bun --outfile=dist/alf-macos ./src/index.ts",
+        "build:linux": "bun build src/index.ts --outfile=dist/alf-linux-x64 --target=bun --compile --target=bun-linux-x64",
+        "build": "bun run build:linux && bun run build:macos"
     },
-    "keywords": [
-        "cli",
-        "task-runner",
-        "yaml",
-        "automation"
-    ],
     "author": "",
     "license": "MIT",
     "devDependencies": {
