@@ -6,7 +6,8 @@ import {
     ValidateCommand, 
     GraphCommand, 
     ServeCommand,
-    StackCommand 
+    StackCommand,
+    TestStackCommand 
 } from './commands/index.ts'
 
 export class CLI {
@@ -17,6 +18,7 @@ export class CLI {
     private graphCommand: GraphCommand
     private serveCommand: ServeCommand
     private stackCommand: StackCommand
+    private testStackCommand: TestStackCommand
 
     constructor() {
         this.program = new Command()
@@ -26,6 +28,7 @@ export class CLI {
         this.graphCommand = new GraphCommand()
         this.serveCommand = new ServeCommand()
         this.stackCommand = new StackCommand()
+        this.testStackCommand = new TestStackCommand()
         this.setupCommands()
     }
 
@@ -111,6 +114,20 @@ export class CLI {
             .option('-l, --list', 'List available templates')
             .action(async (stackName, options) => {
                 await this.handleCommand(() => this.stackCommand.execute(stackName, options))
+            })
+
+        // Test Stack command
+        this.program
+            .command('test-stack')
+            .description('Test a created stack by starting it and running health checks')
+            .argument('<stack-name>', 'Name of the stack to test')
+            .option('-c, --cleanup', 'Clean up stack after testing')
+            .option('-t, --timeout <ms>', 'Timeout for health checks in milliseconds', '30000')
+            .action(async (stackName, options) => {
+                await this.handleCommand(() => this.testStackCommand.execute(stackName, {
+                    cleanup: options.cleanup,
+                    timeout: parseInt(options.timeout)
+                }))
             })
     }
 
