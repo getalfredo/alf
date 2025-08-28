@@ -31,9 +31,18 @@ export class CLI {
             .name('alf')
             .description('A lightweight CLI tool for executing YAML-defined tasks')
             .version('1.0.0')
-            .showHelpAfterError()
             .configureHelp({
                 sortSubcommands: true,
+            })
+            .exitOverride() // Prevent automatic process.exit()
+            .configureOutput({
+                writeErr: (str: string) => {
+                    // Suppress the "error: unknown command" message for empty input
+                    if (str.includes('error: unknown command') && process.argv.slice(2).length === 0) {
+                        return
+                    }
+                    process.stderr.write(str)
+                }
             })
 
         // Run command
@@ -113,6 +122,15 @@ export class CLI {
             return
         }
         
-        await this.program.parseAsync(process.argv)
+        try {
+            await this.program.parseAsync(process.argv)
+        } catch (error: any) {
+            // Handle Commander.js errors gracefully
+            if (error.code === 'commander.unknownCommand') {
+                this.program.outputHelp()
+                process.exit(1)
+            }
+            throw error
+        }
     }
 }
