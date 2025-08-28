@@ -102,8 +102,11 @@ export class CLI {
     }
 
     async run(): Promise<void> {
-        // If no arguments provided, show help
-        if (process.argv.length <= 2) {
+        // Filter out node/bun executable and script name to get actual CLI args
+        const args = process.argv.slice(2)
+        
+        // If no actual CLI arguments provided, show help
+        if (args.length === 0) {
             this.program.help()
             return
         }

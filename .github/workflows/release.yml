@@ -24,7 +24,9 @@ jobs:
         run: bun install
       
       - name: Build Linux binary
-        run: bun run build:linux
+        run: |
+          bun -v
+          bun run build:linux
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
