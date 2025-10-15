@@ -25,7 +25,7 @@ jobs:
         id: current-time
         run: echo "time=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
 
-      - name: Update documentation
+      - name: Build
         run: |
           cd cli
           composer install
