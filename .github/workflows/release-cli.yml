@@ -37,7 +37,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: filament-docs
+          tag_name: alf-cli
           name: Alfredo CLI Release
           body: |
             Alfredo CLI
