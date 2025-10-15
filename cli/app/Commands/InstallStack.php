@@ -27,9 +27,11 @@ class InstallStack extends Command
      */
     public function handle(): int
     {
+        File::ensureDirectoryExists(getcwd() . '/stacks/docmost');
+
         File::put(
-            path: '/home/sail/foo.txt',
-            contents: 'Bar',
+            path: getcwd() . '/stacks/docmost/compose.yml',
+            contents: File::get(resource_path('views/docmost.yml')),
         );
 
         return 0;

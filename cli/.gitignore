@@ -6,3 +6,9 @@
 builds
 /database/database.sqlite
 .env
+
+# Alf production folders
+stacks
+workspaces
+extensions
+logs
