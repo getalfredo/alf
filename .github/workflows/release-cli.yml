@@ -1,0 +1,49 @@
+name: Release CLI
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - cli/**
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - name: Get current time
+        id: current-time
+        run: echo "time=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+
+      - name: Update documentation
+        run: |
+          cd cli
+          composer install
+          chmod +x ./run
+          ./run build-cli
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: filament-docs
+          name: AI friendly format Filament Documentation
+          body: |
+            Alfredo CLI
+            Created on ${{ steps.current-time.outputs.time }}
+          files: |
+            cli/builds/build/**
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
