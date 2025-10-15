@@ -22,7 +22,8 @@
     "require-dev": {
         "laravel/pint": "^1.25.1",
         "mockery/mockery": "^1.6.12",
-        "pestphp/pest": "^3.8.4|^4.1.2"
+        "pestphp/pest": "^3.8.4|^4.1.2",
+        "phpacker/phpacker": "^0.6.3"
     },
     "autoload": {
         "psr-4": {
@@ -46,5 +47,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "bin": ["cli"]
+    "bin": ["alf"]
 }

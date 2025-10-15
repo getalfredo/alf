@@ -1,0 +1,30 @@
+#!/bin/bash
+PATH=./node_modules/.bin:$PATH
+
+set -e
+
+function build-cli {
+    cd cli
+    php alf app:build --build-version=unreleased alf.phar
+    ./vendor/bin/phpacker build --src=./builds/alf.phar --php=8.4 all
+    echo "✅ Build CLI done"
+    cd -
+}
+
+function start {
+    build-cli
+    echo "Done"
+}
+
+function default {
+    start
+}
+
+function help {
+    echo "$0 <task> <args>"
+    echo "Tasks:"
+    compgen -A function | cat -n
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time ${@:-default}
