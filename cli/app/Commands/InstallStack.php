@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\File;
 use LaravelZero\Framework\Commands\Command;
 
 class InstallStack extends Command
@@ -24,9 +25,14 @@ class InstallStack extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
-        //
+        File::put(
+            path: '/home/sail/foo.txt',
+            contents: 'Bar',
+        );
+
+        return 0;
     }
 
     /**

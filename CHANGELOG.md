@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Eloquent, Blade and Dotenv support.
+- Add Eloquent, Queue, Blade, Log and Dotenv support.
 - Build single-executable cross-platform.
 - Testing-host to simulate different environments for better test coverage.
 - Laravel-Zero for CLI app.
