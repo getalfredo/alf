@@ -38,7 +38,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: filament-docs
-          name: AI friendly format Filament Documentation
+          name: Alfredo CLI Release
           body: |
             Alfredo CLI
             Created on ${{ steps.current-time.outputs.time }}
