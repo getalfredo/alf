@@ -3,5 +3,6 @@
 mkdir -p $HOME/alfredo
 
 curl -sSL \
-    -O https://github.com/getalfredo/alf/releases/download/filament-docs/linux-x64 \
-    -o $HOME/alfredo/alf
+    -o $HOME/alfredo/alf https://github.com/getalfredo/alf/releases/download/alf-cli/linux-x64
+
+chmod a+x $HOME/alfredo/alf
