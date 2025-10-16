@@ -7,7 +7,7 @@ It helps install and manage various services on your server with ease.
 ## Install
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/getalfredo/alf/refs/heads/main/install/ubuntu.sh | bash
+curl -L https://raw.githubusercontent.com/getalfredo/alf/refs/heads/main/install/ubuntu.sh | bash
 ```
 
 
