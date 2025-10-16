@@ -11,6 +11,6 @@ curl -L https://raw.githubusercontent.com/getalfredo/alf/refs/heads/main/install
 ```
 
 
-## Dev in Firebase
+## Development in Firebase
 
 https://studio.firebase.google.com/import?url=https://github.com/getalfredo/alf&name=Alfredo
