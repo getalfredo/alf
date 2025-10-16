@@ -7,5 +7,10 @@ It helps install and manage various services on your server with ease.
 ## Install
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/getalfredo/alf/refs/heads/main/install-ubuntu.sh | bash
+curl -sSL https://raw.githubusercontent.com/getalfredo/alf/refs/heads/main/install/ubuntu.sh | bash
 ```
+
+
+## Dev in Firebase
+
+https://studio.firebase.google.com/import?url=https://github.com/getalfredo/alf&name=Alfredo
