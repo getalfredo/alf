@@ -15,8 +15,7 @@ class InstallQueueService extends Command
      */
     protected $signature = 'install:queue-service
                             {--user= : The user to run the service as}
-                            {--working-directory= : The working directory for the queue worker}
-                            {--php-path=/usr/bin/php : Path to PHP binary}';
+                            {--working-directory= : The working directory for the queue worker}';
 
     /**
      * The console command description.
@@ -36,11 +35,11 @@ class InstallQueueService extends Command
         }
 
         // Get options or use defaults
-        $user = $this->option('user') ?? posix_getpwuid(posix_geteuid())['name'];
-        $workingDirectory = $this->option('working-directory') ?? getcwd();
+        $user = $this->option('user');
+        $workingDirectory = $this->option('working-directory');
 
         // Validate working directory
-        if (!File::isDirectory($workingDirectory)) {
+        if (! File::isDirectory($workingDirectory)) {
             $this->error("Working directory does not exist: {$workingDirectory}");
             return 1;
         }
